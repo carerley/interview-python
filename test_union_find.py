@@ -3,8 +3,8 @@ import unittest
 
 class ConnectedGraphII:
     """
+    https://xinjiema.gitbooks.io/leetcode/content/union-find/connecting-graph.html
     Givennnodes in a graph labeled from1ton. There is no edges in the graph at beginning.
-
     You need to support the following method:
     1.connect(a, b), an edge to connect node a and node b
     2.query(a), Returns the number of connected component nodes which include node a
@@ -42,7 +42,35 @@ class ConnectedGraphII:
         self.parent[a] = self._find(self.parent[a])
         return self.parent[a]
     
+    
+class ConnectedGraphIII:
+    """Givennnodes in a graph labeled from1ton. There is no edges in the graph at beginning.
+    You need to support the following method:
+    1.connect(a, b), an edge to connect node a and node b
+    2.query(a), Returns the number of connected component nodes which include nodea
+    """            
+    def __init__(self, n) -> None:
+        self.count = n
+        self.parent = [i for i in range(0, n+1)]
         
+    def connect(self, a, b):
+        root_a = self.find(a)
+        root_b = self.find(b)
+        if root_a != root_b:
+            self.count -= 1
+            self.parent[root_b] = root_a
+    
+    
+    def find(self, a):
+        if self.parent[a] == a:
+            return a
+        
+        self.parent[a] = self.find(self.parent[a])
+        return self.parent[a]
+
+    
+    def query(self):
+        return self.count
 
 class TestUnionFind(unittest.TestCase):
     def test_connected_graph(self):
@@ -53,7 +81,13 @@ class TestUnionFind(unittest.TestCase):
         self.assertEqual(3, cg.query(2))
         self.assertEqual(3, cg.query(3))
      
-    
-if __name__ == "__main__":
-    t = TestUnionFind()
-    t.run()
+    def test_connect_graph_count(self):
+        cg = ConnectedGraphIII(4)
+        cg.connect(1,2)
+        self.assertEqual(3, cg.query())
+        cg.connect(2,3)
+        self.assertEqual(2, cg.query())
+        cg.connect(1,3)
+        self.assertEqual(2, cg.query())        
+        cg.connect(3,4)
+        self.assertEqual(1, cg.query())
